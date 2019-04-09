@@ -35,11 +35,9 @@ PROCESS_THREAD(sensor_process, ev, data)
 
         /* Insira seu código aqui */
 
-        if(buf_c == BUF_SIZE){
-            buf_c = 0;
-        }
 
         buffer[buf_c++] = val;
+        if(buf_c < 7) buf_c = 0;
 
         printf("Leu %d\n", val);
 
