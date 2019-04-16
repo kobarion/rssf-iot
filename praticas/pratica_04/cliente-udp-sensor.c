@@ -13,7 +13,7 @@
 
 static struct etimer et;
 static struct uip_udp_conn *temp_client_conn;
-// static struct uip_udp_conn *leds_client_conn;
+ static struct uip_udp_conn *leds_client_conn;
 static uip_ipaddr_t ipaddr;
 
 static void udp_handler(void);
@@ -57,22 +57,22 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   /********** CONECTANDO AO SERVIDOR UDP **********/
   // Encontrar endereço IPv6 do servidor
-  // static resolv_status_t status = RESOLV_STATUS_UNCACHED;
-  // while(status != RESOLV_STATUS_CACHED)
-  // {
-  //     status = set_connection_address(&ipaddr, UDP_CONNECTION_ADDR);
-  //     PROCESS_WAIT_EVENT();
-  // }
+   static resolv_status_t status = RESOLV_STATUS_UNCACHED;
+   while(status != RESOLV_STATUS_CACHED)
+   {
+       status = set_connection_address(&ipaddr, UDP_CONNECTION_ADDR);
+       PROCESS_WAIT_EVENT();
+   }
   // Se não utilizar mDNS, use a linha abaixo para registrar IPv6 destino
-  uip_ip6addr(&ipaddr, 0xfd00, 0x0000, 0x0000, 0x0000, 0x0212, 0x4b00, 0x0d2d, 0x0306);
+//  uip_ip6addr(&ipaddr, 0xfd00, 0x0000, 0x0000, 0x0000, 0x0212, 0x4b00, 0x0d2d, 0x0306);
 
   // Criando sockets UDP para conexão com host:porta remoto
   temp_client_conn = udp_new(&ipaddr, UIP_HTONS(CONN_PORT_TEMP), NULL);
   udp_bind(temp_client_conn, UIP_HTONS(CONN_PORT_TEMP));
 
   /*** AS LINHAS ABAIXO ABREM UMA SEGUNDA PORTA COM O MESMO SERVIDOR ***/
-  // leds_client_conn = udp_new(&ipaddr, UIP_HTONS(CONN_PORT_LEDS), NULL);
-  // udp_bind(leds_client_conn, UIP_HTONS(CONN_PORT_LEDS));
+   leds_client_conn = udp_new(&ipaddr, UIP_HTONS(CONN_PORT_LEDS), NULL);
+   udp_bind(leds_client_conn, UIP_HTONS(CONN_PORT_LEDS));
 
 
   etimer_set(&et, SEND_INTERVAL);
@@ -165,7 +165,16 @@ static void send_led_cmd(int8_t cmd, int8_t led)
      ***       - 2: AMBOS
      ***/
 
+    leds_payload_t payload;
 
-    // uip_udp_packet_send(leds_client_conn, payload.i8, sizeof(payload));
+    payload.comando.led = led;
+    payload.comando.cmd = cmd;
+
+    if(uip_ds6_get_global(ADDR_PREFERRED) == NULL) {
+        printf("Aguardando auto-configuracao de IP\n");
+        return;
+    }
+
+    uip_udp_packet_send(leds_client_conn, payload.i8, sizeof(payload));
 }
 /*---------------------------------------------------------------------------*/

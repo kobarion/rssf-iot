@@ -67,13 +67,19 @@ static void leds_udp_handler(void)
              ***   Modifique o estado do LED verde
              ***   conforme o comando recebido (cmd)
              ***/
+            if(payload.comando.cmd = 0 ) leds_off(LEDS_GREEN);
+            else if(payload.comando.cmd = 1) leds_on(LEDS_GREEN);
+            else leds_toggle(LEDS_GREEN);
             break;
 
         case 1: //vermelho
             /*** COLOQUE AQUI SEU CÓDIGO
              ***   Modifique o estado do LED vermelho
-             ***   conforme o comando recebido (cmd)
+             ***   conforme o command recebido (cmd)
              ***/
+            if(payload.comando.cmd = 0 ) leds_off(LEDS_RED);
+            else if(payload.comando.cmd = 1) leds_on(LEDS_RED);
+            else leds_toggle(LEDS_RED);
             break;
 
         case 2: //ambos
@@ -81,6 +87,9 @@ static void leds_udp_handler(void)
              ***   Modifique o estado de todos os LEDs
              ***   conforme o comando recebido (cmd)
              ***/
+            if(payload.comando.cmd = 0 ) leds_off(LEDS_ALL);
+            else if(payload.comando.cmd = 1) leds_on(LEDS_ALL);
+            else leds_toggle(LEDS_ALL);
             break;
 
         default:
