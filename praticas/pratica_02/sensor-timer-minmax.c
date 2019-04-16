@@ -9,8 +9,8 @@
 #define BUF_SIZE 8
 static int buffer[BUF_SIZE];
 static int buf_c = 0;
-static int min;
-static int max;
+static int min = 100;
+static int max = 0;
 
 static struct etimer et_sensor;
 static struct etimer et_uart;
@@ -43,7 +43,7 @@ PROCESS_THREAD(sensor_process, ev, data)
         /* Insira seu código aqui */
 
         buffer[buf_c++] = val;
-        if(buf_c < 7) buf_c = 0;
+        if(buf_c > 7) buf_c = 0;
 
         printf("Leu %d\n", val);
     }
@@ -72,6 +72,8 @@ PROCESS_THREAD(uart_process, ev, data)
         int avg = 0;
         for(int i=0;i<BUF_SIZE;i++) {
             avg += buffer[i];
+            if(min > buffer[i]) min = buffer[i];
+            if(max < buffer[i]) max = buffer[i];
         }
         avg = avg/BUF_SIZE;
         printf("Temperatura media: %d\n", avg);
