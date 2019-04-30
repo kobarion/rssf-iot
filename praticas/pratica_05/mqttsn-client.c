@@ -1,5 +1,6 @@
 #include <contiki.h>
 #include <dev/leds.h>
+#include <string.h>
 
 #include "project-conf.h"
 #include "utils.h"
@@ -80,7 +81,7 @@ PROCESS_THREAD(mqttsn_process, ev, data)
   process_start(&cetic_6lbr_client_process, NULL);
 
   // Configura IPv6 do broker MQTT-SN
-  uip_ip6addr(&broker_addr, 0x2801, 0x84, 0x0, 0x1010, 0x9a4a, 0x2439, 0xc1b5, 0x563a);
+  uip_ip6addr(&broker_addr, 0x2801, 0x84, 0x0, 0x1010, 0x80c8, 0x2c21, 0x609, 0x722d);
 
   // Cria socket para MQTT-SN
   mqtt_sn_create_socket(&mqtt_sn_c, UDP_CONNECTION_PORT, &broker_addr, UDP_CONNECTION_PORT);
@@ -140,7 +141,7 @@ PROCESS_THREAD(mqttsn_process, ev, data)
       PROCESS_WAIT_EVENT();
       if(etimer_expired(&periodic_timer))
       {
-        leds_toggle(LEDS_ALL);
+//        leds_toggle(LEDS_ALL);
         etimer_restart(&periodic_timer);
       }
     }
@@ -216,6 +217,14 @@ static void publish_receiver(struct mqtt_sn_connection *mqc,
   memcpy(&incoming_packet, data, datalen);
   incoming_packet.data[datalen-7] = 0x00;
   printf("Published message received: %s\n", incoming_packet.data);
+
+  if (incoming_packet.data[0] == '1'){
+      leds_on(LEDS_ALL);
+  } else {
+      leds_off(LEDS_ALL);
+  }
+
+
   //see if this message corresponds to ctrl channel subscription request
   if (uip_htons(incoming_packet.topic_id) == ctrl_topic_id)
   {

@@ -7,7 +7,7 @@
 PROCESS(ctrl_subscription_process, "subscribe to a device control channel");
 
 static mqtt_sn_subscribe_request subreq;
-static char ctrl_topic[22] = "0000000000000000/ctrl\0";//of form "0011223344556677/ctrl" it is null terminated, and is 21 charactes
+static char ctrl_topic[22] = "0000000000000000/sala\0";//of form "0011223344556677/ctrl" it is null terminated, and is 21 charactes
 static uint16_t ctrl_topic_id;
 static uint16_t ctrl_topic_msg_id;
 static char device_id[17];

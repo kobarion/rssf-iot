@@ -60,7 +60,7 @@ PROCESS_THREAD(publish_process, ev, data)
     {
       PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&send_timer));
       sprintf(buf, " %" PRIu32, message_number); //removendo o warning do GCC para o uint32_t
-      printf("publishing at topic: %s -> msg: %s\n", pub_topic, buf);
+//      printf("publishing at topic: %s -> msg: %s\n", pub_topic, buf);
       message_number++;
       buf_len = strlen(buf);
       mqtt_sn_send_publish(&mqtt_sn_c, publisher_topic_id,MQTT_SN_TOPIC_TYPE_NORMAL,buf, buf_len,qos,retain);
