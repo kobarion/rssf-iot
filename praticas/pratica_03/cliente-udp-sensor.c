@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "utils.h"
 #include "sensor-timer.h"
+#include <dev/leds.h>
 
 #define SEND_INTERVAL		(5 * CLOCK_SECOND)
 
@@ -132,9 +133,24 @@ static void udp_handler(void)
 {
     int_payload_t payload;
 
-    if(uip_newdata()) {
+    if(uip_newdata()) {<
       memcpy(payload.i8, uip_appdata, sizeof(payload));
       printf("Resposta do servidor: '%ld'\n", payload.i32);
+    }
+
+    switch(payload.i32){
+        case 0:
+            leds_off(LEDS_ALL);
+            break;
+        case 1:
+            leds_off(LEDS_GREEN);
+            leds_on(LEDS_RED);
+            break;
+        case 2:
+            leds_off(LEDS_RED);
+            leds_on(LEDS_GREEN);
+            break;
+        default: printf("Deu ruim.\n");
     }
 }
 /*---------------------------------------------------------------------------*/
